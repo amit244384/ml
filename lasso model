@@ -1,0 +1,39 @@
+library(caret)
+library(glmnet)
+library(MASS)
+
+
+data(iris)
+
+
+set.seed(123)
+train_indices <- sample(1:nrow(iris), 0.8 * nrow(iris))
+train_data <- iris[train_indices, ]
+test_data <- iris[-train_indices, ]
+
+
+X_train <- as.matrix(train_data[, -5]) 
+y_train <- train_data$Species
+
+X_test <- as.matrix(test_data[, -5])
+y_test <- test_data$Species
+
+
+lasso_model <- cv.glmnet(x = X_train, y = y_train, alpha = 1, family = "multinomial")
+
+
+best_lambda <- lasso_model$lambda.min
+
+
+lasso_final_model <- glmnet(x = X_train, y = y_train, alpha = 1, lambda = best_lambda, family = "multinomial")
+
+summary(lasso_final_model)
+predictions <- predict(lasso_final_model, newx = X_test, type = "class")
+
+
+accuracy <- mean(predictions == y_test)
+cat("Accuracy:", accuracy, "\n")
+
+
+confusion_matrix <- table(predictions, y_test)
+print(confusion_matrix)
