@@ -1,0 +1,26 @@
+library(datasets)
+
+
+data(iris)
+
+
+set.seed(123)
+
+
+train_indices <- sample(1:nrow(iris), 0.8 * nrow(iris))
+train_data <- iris[train_indices, ]
+test_data <- iris[-train_indices, ]
+
+
+lm_model <- lm(Sepal.Length ~ Sepal.Width + Petal.Length + Petal.Width, data = train_data)
+
+
+summary(lm_model)
+
+
+predictions <- predict(lm_model, newdata = test_data)
+
+
+rmse <- sqrt(mean((test_data$Sepal.Length - predictions)^2))
+cat("Root Mean Squared Error (RMSE):", rmse, "\n")
+
