@@ -1,0 +1,38 @@
+library(xgboost)
+library(caret)
+
+
+data(iris)
+
+
+set.seed(123)
+train_indices <- createDataPartition(iris$Species, p = 0.8, list = FALSE)
+train_data <- iris[train_indices, ]
+test_data <- iris[-train_indices, ]
+
+
+train_data$Species <- as.numeric(train_data$Species) - 1
+test_data$Species <- as.numeric(test_data$Species) - 1
+
+
+dtrain <- xgb.DMatrix(data = as.matrix(train_data[, -5]), label = train_data$Species)
+dtest <- xgb.DMatrix(data = as.matrix(test_data[, -5]), label = test_data$Species)
+
+
+params <- list(
+  objective = "multi:softmax", 
+  num_class = 3,               
+  eval_metric = "merror"      
+)
+
+
+xgb_model <- xgb.train(params = params, data = dtrain, nrounds = 100)
+
+
+pred <- predict(xgb_model, dtest)
+pred <- as.numeric(pred) - 1  # Convert back to original labels
+
+
+accuracy <- sum(pred == test_data$Species) / length(test_data$Species)
+cat("Accuracy on test set:", accuracy, "\n")
+summary(xgb_model)
