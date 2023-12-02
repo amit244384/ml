@@ -1,0 +1,26 @@
+library(MASS)
+
+
+data(iris)
+
+
+set.seed(123)
+train_indices <- sample(1:nrow(iris), 0.8 * nrow(iris))
+train_data <- iris[train_indices, ]
+test_data <- iris[-train_indices, ]
+
+
+lda_model <- lda(Species ~ ., data = train_data)
+
+predictions <- predict(lda_model, newdata = test_data)
+
+
+accuracy <- mean(predictions$class == test_data$Species)
+cat("Accuracy:", accuracy, "\n")
+
+
+confusion_matrix <- table(predictions$class, test_data$Species)
+print(confusion_matrix)
+
+
+summary(lda_model)
