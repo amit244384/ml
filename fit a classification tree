@@ -1,0 +1,23 @@
+library(rpart)
+library(rpart.plot)
+
+
+data(iris)
+
+
+set.seed(123)
+train_indices <- sample(1:nrow(iris), 0.8 * nrow(iris))
+train_data <- iris[train_indices, ]
+test_data <- iris[-train_indices, ]
+
+
+tree_model <- rpart(Species ~ ., data = train_data, method = "class")
+
+rpart.plot(tree_model, box.palette = "RdBu", shadow.col = "gray", nn = TRUE)
+
+
+predictions <- predict(tree_model, newdata = test_data, type = "class")
+
+
+accuracy <- sum(predictions == test_data$Species) / nrow(test_data)
+cat("Accuracy on test set:", accuracy, "\n")
