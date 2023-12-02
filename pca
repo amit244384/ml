@@ -1,0 +1,25 @@
+library(ggplot2)
+
+
+data(iris)
+
+
+features <- iris[, -5]
+
+pca_result <- prcomp(features, scale. = TRUE)
+
+
+summary(pca_result)
+
+
+prop_var <- pca_result$sdev^2 / sum(pca_result$sdev^2)
+prop_var
+
+
+cumulative_var <- cumsum(prop_var)
+ggplot() +
+  geom_line(aes(x = 1:length(cumulative_var), y = cumulative_var), color = "blue") +
+  geom_point(aes(x = 1:length(cumulative_var), y = cumulative_var), color = "red", size = 2) +
+  labs(title = "Cumulative Variance Explained by Principal Components",
+       x = "Number of Components", y = "Cumulative Variance Explained") +
+  theme_minimal()
