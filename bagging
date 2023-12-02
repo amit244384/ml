@@ -1,0 +1,24 @@
+ibrary(ipred)
+library(caret)
+
+
+data(iris)
+
+
+set.seed(123)
+
+
+train_indices <- createDataPartition(iris$Species, p = 0.8, list = FALSE)
+train_data <- iris[train_indices, ]
+test_data <- iris[-train_indices, ]
+
+
+bagging_model <- bagging(Species ~ ., data = train_data, coob = TRUE)
+
+
+predictions <- predict(bagging_model, newdata = test_data)
+
+
+accuracy <- confusionMatrix(predictions, test_data$Species)$overall['Accuracy']
+cat("Accuracy on test set:", accuracy, "\n")
+summary(bagging_model)
