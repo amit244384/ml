@@ -1,0 +1,29 @@
+library(ggplot2)
+
+
+data(iris)
+
+
+x <- iris$Sepal.Length
+y <- iris$Sepal.Width
+
+
+degree <- 3
+poly_fit <- lm(y ~ poly(x, degree))
+
+
+x_seq <- seq(min(x), max(x), length.out = 100)
+
+
+y_pred <- predict(poly_fit, newdata = data.frame(x = x_seq))
+
+
+plot_data <- data.frame(Sepal.Length = x_seq, Sepal.Width = y_pred)
+
+
+ggplot() +
+  geom_point(data = iris, aes(x = Sepal.Length, y = Sepal.Width)) +  # Original data points
+  geom_line(data = plot_data, aes(x = Sepal.Length, y = Sepal.Width), color = "red") +  # Fitted polynomial curve
+  labs(title = "Polynomial Regression Fit to Iris Dataset",
+       x = "Sepal Length", y = "Sepal Width") +
+  theme_minimal()
